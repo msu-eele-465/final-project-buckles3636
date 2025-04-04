@@ -1,24 +1,26 @@
 # Final project proposal
 
-- [ ] I have reviewed the project guidelines.
-- [ ] I will be working alone on this project.
-- [ ] No significant portion of this project will be (or has been) used in other course work.
+- [X] I have reviewed the project guidelines.
+- [X] I will be working alone on this project.
+- [X] No significant portion of this project will be (or has been) used in other course work.
 
 ## Embedded System Description
 
-At a high level, explain in 2-3 sentences what your embedded system will do.  Then, in 1-2 sentences each, explain each input, the process, and each output. This section is the bulk of the proposal.
+My embedded system will take the input of a potentiometer to set the position of a servo motor. The system will also feature a saftey switch and enable/disable leds.
 
 ## Hardware Setup
 
-What hardware will you require? Provide a conceptual circuit diagram and/or block diagram to help the reviewers understand your proposal. Be sure to introduce and discuss your figures in the text.
+The selected servo motor will be a [brushed dc type, with quadurture encoder](https://www.amazon.com/dp/B0DB28N8FJ/ref=sspa_dk_detail_0?pd_rd_i=B0DB28N8FJ&pd_rd_w=S4IQc&content-id=amzn1.sym.8c2f9165-8e93-42a1-8313-73d3809141a2&pf_rd_p=8c2f9165-8e93-42a1-8313-73d3809141a2&pf_rd_r=R2YHJAFX2T8W96AYETSX&pd_rd_wg=ZQ8JV&pd_rd_r=8e7f9e70-8a5c-4c9e-b885-8f2813bc07f5&s=hi&sp_csd=d2lkZ2V0TmFtZT1zcF9kZXRhaWw&th=1). This will then be connected to a tb67h420ftg dual halfbridge motor driver. The motor driver and encoder outputs will be hooked up to the slave. The master will have two outputs connecet to a green and red led for status, and a switch for saftey.
 
 ## Software overview
 
-Discuss, at a high level, a concept of how your code will work. Include a *high-level* flowchart. This is a high-level concept that should concisely communicate the project's concept.
+Slave will take an integer for position over I2C and move to that exact position using feedback from the encoder and a control loop.
+
+Master will use the ADC to read a value from the potentiometer and convert that into a position to send to the motor. Will also have saftey switch to lock the system and outputs configured as status leds.
 
 ## Testing Procedure
 
-Briefly describe how you will test and verify that your project is a success. Think about how you will *demo* the final project. If you need extra equipment for the demo, be sure that you can either bring the equipment or convincingly simulate it. For example, if you want to build a system that uses CAN bus to interface with your car, you won't be able to bring your car into Cobleigh for the demo...
+First, ensure turning the potentiometer while system is in "safe mode" does not move motor. Then switch system into "active mode" and ensure one rotation of the potentiometer correlates to exactly one rotation of the motor. 
 
 
 ## Prescaler
@@ -26,7 +28,7 @@ Briefly describe how you will test and verify that your project is a success. Th
 Desired Prescaler level: 
 
 - [ ] 100%
-- [ ] 95% 
+- [X] 95% 
 - [ ] 90% 
 - [ ] 85% 
 - [ ] 80% 
@@ -37,32 +39,32 @@ Desired Prescaler level:
 **Outline how you meet the requirements for your desired prescalar level**
 
 **The inputs to the system will be:**
-1.  Short description of input #1
-2.  
+1.  Quadurature Encoder
+2.  Potentiometer
+3.  Switch
 
 **The outputs of the system will be:**
-1.   Short description of output #1
-2. 
+1.   Dual half bridge motor driver (Connected to dc motor)
 
 **The project objective is**
 
-{text – 1 to 2 sentences}
+Position controlled servo motor
 
 **The new hardware or software modules are:**
-1. Short description of new hardware or software module
-2. 
+1. TB67H420FTG Half Bridge Motor Driver
+2. N20 200rpm Encoder Motor
+3. Hall Effect Quaderature Encoder
 
 
 The Master will be responsible for:
 
-{text – 1 to 2 sentences}
+Reading the potentiometer and sending position commands over I2C. Also will host the status leds and safety switch.
 
 The Slave(s) will be responsible for:
 
-{text – 1 to 2 sentences}
-
+Quaderature encoder reading, motor driver output, and control loop.
 
 
 ### Argument for Desired Prescaler
 
-Consider the guidelines presented in the lecture notes and convince the reviewers that this proposal meets the minimum requirements for your desired prescale level.
+Lots of new hardware and I already know getting the encoder working correctly is going to be a major pain. Also will have to do PID tuning most likely.
