@@ -1,12 +1,19 @@
+//----------------------------------------------------------------------------------------------------------//
+// Author: Peter Buckley
+// Date: 5/1/25
+// Class: EELE-465
+// Purpose: To test out closed loop feedback with the motor seperate from other functionality
+//----------------------------------------------------------------------------------------------------------//
+
 #include <msp430.h>
 
-#define ENCODER_A BIT4      // P1.4
-#define ENCODER_B BIT5      // P1.5
+#define ENCODER_A BIT4      // P1.4 C1
+#define ENCODER_B BIT5      // P1.5 C2
 
-#define IN_A BIT0           // P4.0 → Motor driver INA
-#define IN_B BIT1           // P4.1 → Motor driver INB
+#define IN_A BIT0           // P4.0 INA
+#define IN_B BIT1           // P4.1 INB
 
-#define PWM_OUT BIT6        // P1.6 → PWM
+#define PWM_OUT BIT6        // P1.6 PWM
 
 volatile int encoder_count = 0;
 unsigned char last_state = 0;
@@ -44,7 +51,7 @@ int main(void)
 
     while (1)
     {
-        // ----- Read Encoder -----
+        // Read Encoder 
         unsigned char current_state = P1IN & (ENCODER_A | ENCODER_B);
 
         if (current_state != last_state)
@@ -61,7 +68,7 @@ int main(void)
             uart_send_char('\n');
         }
 
-        // ----- Motor Control -----
+        // Motor Control 
         if (encoder_count < 1000)
         {
             // Clockwise

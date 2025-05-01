@@ -1,3 +1,10 @@
+//----------------------------------------------------------------------------------------------------------//
+// Author: Peter Buckley
+// Date: 5/1/25
+// Class: EELE-465
+// Purpose: To test out reading the encoder seperate from other subsystems
+//----------------------------------------------------------------------------------------------------------//
+
 #include "intrinsics.h"
 #include <msp430.h>
 

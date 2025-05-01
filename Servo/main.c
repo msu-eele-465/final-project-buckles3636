@@ -1,3 +1,10 @@
+//----------------------------------------------------------------------------------------------------------//
+// Author: Peter Buckley
+// Date: 5/1/25
+// Class: EELE-465
+// Purpose: Main Program
+//----------------------------------------------------------------------------------------------------------//
+
 #include "intrinsics.h"
 #include <msp430.h>
 
@@ -26,6 +33,7 @@ void uart_send_char(char c);
 void uart_send_int(int num);
 void uart_send_string(const char *str);
 void setupEncoder();
+void setupLeds();
 void setupMotor();
 void setMotor(int dir, int pwm);
 void i2c_slave_setup();
@@ -38,6 +46,7 @@ int main(void)
     setupUART();
     setupEncoder();
     setupMotor();
+    setupLeds();
     i2c_slave_setup();
 
     __enable_interrupt();
@@ -58,6 +67,7 @@ int main(void)
 
             last_state = current_state;
 
+            // Send encoder pulses
             uart_send_int(encoder_count);
             uart_send_char('\r');
             uart_send_char('\n');
@@ -67,14 +77,20 @@ int main(void)
         if (encoder_count < target_position - 2)
         {
             setMotor(1, speed);
+            P6OUT |= BIT0;
+            P6OUT &= ~(BIT1);
         }
         else if (encoder_count > target_position + 2)
         {
             setMotor(-1, speed);
+            P6OUT |= BIT1;
+            P6OUT &= ~(BIT0);
         }
         else
         {
             setMotor(0, 0);
+            P6OUT |= BIT1;
+            P6OUT |= BIT0;
         }
     }
 }
@@ -113,6 +129,7 @@ __interrupt void I2C_ISR(void) {
             message_buffer[msg_index++] = UCB1RXBUF;
             break;
 
+        // Read 2 bytes
         case USCI_I2C_UCSTPIFG:
             if (msg_index == 2) {
                 received_degrees = (message_buffer[1] & 0xFF) | (message_buffer[0] << 8);
@@ -131,6 +148,11 @@ void setupEncoder(){
     P1OUT |= (ENCODER_A | ENCODER_B);
 
     last_state = P1IN & (ENCODER_A | ENCODER_B);
+}
+
+void setupLeds(){
+    P6DIR |= (BIT0 | BIT1);
+    P6OUT &= ~(BIT0 | BIT1);
 }
 
 void setupMotor(){
@@ -180,7 +202,7 @@ void uart_send_int(int num)
         uart_send_char('-');
         num = -num;
     }
-
+    // Convert int to individual chars
     if (num >= 10000) uart_send_char('0' + (num / 10000) % 10);
     if (num >= 1000) uart_send_char('0' + (num / 1000) % 10);
     if (num >= 100) uart_send_char('0' + (num / 100) % 10);
