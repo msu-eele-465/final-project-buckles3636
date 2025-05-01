@@ -55,7 +55,7 @@ int main(void)
             uart_send_char('\n');
         }
 
-        __delay_cycles(10000);
+        __delay_cycles(10);
     }
 }
 
